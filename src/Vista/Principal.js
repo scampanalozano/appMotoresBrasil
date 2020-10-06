@@ -1,7 +1,6 @@
 import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import './Principal.css';
 import Form from 'react-bootstrap/Form'
 import * as XLSX from 'xlsx'
 import Button from "react-bootstrap/Button"

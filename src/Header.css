@@ -1,6 +1,23 @@
-.titulo{
+.header{
+	background-color: #2D1CAA;
+	padding: 10px;
+}
 
+.MB{
+	max-height: 100px;
+	width: auto; height: 100px;
+    display:block;
+    margin:auto;
+}
+
+.div-image{
+	justify-content: center;
+	text-align: center;	
+}
+
+.titulo{
     text-align: center;
-	font-family: 'Neucha', cursive;
+	font-family: 'Noto Serif', serif;
 	font-size: 150.5%;
+	color: aliceblue;
 }
