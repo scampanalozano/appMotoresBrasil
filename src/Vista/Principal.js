@@ -5,6 +5,9 @@ import Form from 'react-bootstrap/Form'
 import * as XLSX from 'xlsx'
 import Button from "react-bootstrap/Button"
 import Documento from '../Servicios/Documento'
+import './Principal.css';
+import Container from 'react-bootstrap/Container';
+import Table from 'react-bootstrap/Table';
 
 class Principal extends React.Component {
 
@@ -74,11 +77,19 @@ class Principal extends React.Component {
 
     render(){
         return (
-            <Row>
+            <Container className='contenedor'>
+
                 
                 <Row>
     
                     <Col>
+                    <div>
+                    <label>
+                    <strong>
+                    Base de datos Principal
+                    </strong>
+                        </label>
+                        </div>
                     <input 
                         required
                         type= "file"
@@ -91,6 +102,17 @@ class Principal extends React.Component {
                     </Col>
     
                     <Col>
+                    <div>
+
+                 
+                    <label>
+                       
+                        <strong>
+                        Base de datos Proveedor
+
+                        </strong>
+                        </label>
+                        </div>
                     <input 
                         required
                         type= "file"
@@ -104,11 +126,13 @@ class Principal extends React.Component {
         
                 </Row>
                 <Row>
-                    <Button type="button" onClick={this.procesarPorCodigo}>Procesar</Button>
+                    <div className= 'botones'>
+                    <Button type="button" onClick={this.procesarPorCodigo} className='separador'>Procesar</Button>
                     <Button type="button" onClick={this.descargar}>Descargar</Button>
+                    </div>
                 </Row>
                 <Row>
-                    <table>
+                    <Table striped bordered className= 'tabla'>
                         <thead>
                             <tr>
                                 {this.state.camposArchivo.map((campo, indexC)=> (
@@ -129,9 +153,10 @@ class Principal extends React.Component {
                             </tr>) 
                         )}
                         </tbody>
-                    </table> 
+                    </Table> 
                 </Row>
-            </Row>
+
+            </Container>
         );
     
     }
