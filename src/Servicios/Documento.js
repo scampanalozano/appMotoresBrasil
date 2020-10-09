@@ -3,17 +3,17 @@ import React from 'react';
 
  class Documento {
 
-busqueda =(documentoPrincipal, documentoProveedor) =>{
-    let camposPrincipal = Object.keys(documentoPrincipal[0]);
-    let camposProveedor = Object.keys(documentoProveedor[0]);
-    let docFinal = [];
-    if(this.validacionCampos(camposPrincipal, camposProveedor)){
-        let docPrincipal = this.busquedaCodigoDescripcion(documentoPrincipal, documentoPrincipal, 2);
-        let docProveedor = this.busquedaCodigoDescripcion(documentoProveedor, documentoProveedor, 2);
-        docFinal = this.busquedaCodigoDescripcion(docPrincipal, docProveedor, 1);
+    busqueda =(documentoPrincipal, documentoProveedor) =>{
+        let camposPrincipal = Object.keys(documentoPrincipal[0]);
+        let camposProveedor = Object.keys(documentoProveedor[0]);
+        let docFinal = [];
+        if(this.validacionCampos(camposPrincipal, camposProveedor)){
+            let docPrincipal = this.busquedaCodigoDescripcion(documentoPrincipal, documentoPrincipal, 2);
+            let docProveedor = this.busquedaCodigoDescripcion(documentoProveedor, documentoProveedor, 2);
+            docFinal = this.busquedaCodigoDescripcion(docPrincipal, docProveedor, 1);
+        }
+        return docFinal;
     }
-    return docFinal;
-}
 
     busquedaCodigoDescripcion = (documentoPrincipal, documentoProveedor, tipo ) =>{
         let camposPrincipal = Object.keys(documentoPrincipal[0]);
@@ -21,6 +21,8 @@ busqueda =(documentoPrincipal, documentoProveedor) =>{
         
         let documentoModificados = []
         let documentoNuevos = []
+        let documentoModificadosProveedor = []
+        let documentoSobrantes = []
         documentoPrincipal.forEach(principal => {
             documentoProveedor.forEach(proveedor => {
                 if (principal[camposPrincipal[0]] === proveedor[camposProveedor[0]]){
@@ -30,10 +32,14 @@ busqueda =(documentoPrincipal, documentoProveedor) =>{
                                 principal = proveedor;
                                 if(tipo === 1){
                                     principal = this.modificarItem(principal, proveedor, camposPrincipal);
+                                    principal['ESTADO'] = 'MODIFICADO';
                                 }
+                                documentoModificadosProveedor.push(proveedor);
                             }
                         }else {
+                            proveedor['ESTADO'] = 'NUEVO';
                             documentoNuevos.push(proveedor);
+                            documentoModificadosProveedor.push(proveedor);
                         }
                     }
                 } else {
@@ -42,14 +48,16 @@ busqueda =(documentoPrincipal, documentoProveedor) =>{
                             if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
                                     principal = proveedor;
-                                    
+                                    principal['ESTADO'] = 'MODIFICADO';
+                                    documentoModificadosProveedor.push(proveedor);
                                 }
                             }else {
+                                proveedor['ESTADO'] = 'NUEVO';
                                 documentoNuevos.push(proveedor);
+                                documentoModificadosProveedor.push(proveedor);
                             }
                         }
                     }
-                    
                 }
             });
             documentoModificados.push(principal);
@@ -57,8 +65,18 @@ busqueda =(documentoPrincipal, documentoProveedor) =>{
         let documentoFinal = documentoModificados.concat(documentoNuevos);
         if(tipo === 2){
             documentoFinal = this.eliminarDuplicados(documentoFinal, camposPrincipal[0]);
+            return documentoFinal; 
         } 
-        return documentoFinal; 
+        if(tipo == 1){
+            console.log(documentoModificadosProveedor);
+            documentoModificadosProveedor.forEach(proveedor => {
+                let index = documentoProveedor.indexOf(proveedor);
+                documentoProveedor.splice(index, 1);
+            });
+            console.log(documentoProveedor);
+            return {docFinal: documentoFinal, docProveedor: documentoProveedor}; 
+
+        }
     }
     
     validacionDescripcion = (descripcionPrincipal, descripcionProveedor) => {
@@ -115,15 +133,14 @@ busqueda =(documentoPrincipal, documentoProveedor) =>{
         if(validacion){
             camposPrincipal.forEach(campoPrincipal => {
                 camposProveedor.forEach(campoProveedor => {
-                    if(campoPrincipal === campoProveedor){
-                        console.log(campoPrincipal, campoProveedor);
+                    if(campoPrincipal.trim() === campoProveedor.trim()){
                         contador++;
                     }
                 })
             })
         }
         validacion = false;
-        console.log(contador, camposPrincipal.length);
+        //console.log(contador, camposPrincipal.length);
         if(contador == camposPrincipal.length){
             validacion = true;
         }
