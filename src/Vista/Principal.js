@@ -22,7 +22,8 @@ class Principal extends React.Component {
             archivoSobrantesProveedor: [],
             camposArchivo: [],
             procesando: 0,
-            inicioProceso: false
+            inicioProceso: false,
+            cargaArchivo: false,
         }
         this.Documento = new Documento();
     }
@@ -41,16 +42,23 @@ class Principal extends React.Component {
         var data = new Uint8Array(e.target.result);
         var workbook = XLSX.read(data, { type: 'array' });
         workbook.SheetNames.forEach((sheetName) => {
+            this.setState({cargaArchivo: true});
+            console.log(this.state.cargaArchivo);
             var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-            if (name == 'file1') {
-                this.setState({
-                    archivo1: XL_row_object
-                });
-            } else {
-                this.setState({
-                    archivo2: XL_row_object
-                });
-            }
+            setTimeout(()=>{
+                let archivo = this.Documento.busquedaInterna(XL_row_object);
+                if (name == 'file1') {
+                    this.setState({
+                        archivo1: archivo,
+                        cargaArchivo: false,
+                    });
+                } else {
+                    this.setState({
+                        archivo2: archivo,
+                        cargaArchivo: false,
+                    });
+                }
+            }, 200)
         })
     }
 
@@ -110,7 +118,7 @@ class Principal extends React.Component {
                             <label>
                                 <strong>
                                     Base de datos Principal
-                    </strong>
+                                </strong>
                             </label>
                         </div>
                         <input
@@ -126,14 +134,11 @@ class Principal extends React.Component {
 
                     <Col>
                         <div>
-
-
                             <label>
-
                                 <strong>
                                     Base de datos Proveedor
 
-                        </strong>
+                                </strong>
                             </label>
                         </div>
                         <input
@@ -149,20 +154,23 @@ class Principal extends React.Component {
 
                 </Row>
                 <Row>
+
                     <div className='botones'>
-                        <Button type="button" onClick={this.procesarPorCodigo} className='separador'>Procesar</Button>
+                        {this.state.inicioProceso?
+                        (<Button type="button" onClick={this.procesarPorCodigo} className='separador' disabled>Procesar</Button>):
+                        (<Button type="button" onClick={this.procesarPorCodigo} className='separador'>Procesar</Button>)
+                        }
                         <Button type="button" onClick={this.descargar}>Descargar</Button>
                     </div>
                 </Row>
                 <Row>
-                    {this.state.inicioProceso?(
-                    <Spinner animation="border" role="status">
+                    {this.state.inicioProceso || this.state.cargaArchivo?(
+                    <Spinner className='progress-bar' animation="border" role="status">
                         <span className="sr-only">Loading...</span>
                     </Spinner>
                     ):(
                         <div></div>
-                    )
-                    }
+                    )}
                 </Row>
                 <Row>
                     <Table striped bordered className='tabla'>

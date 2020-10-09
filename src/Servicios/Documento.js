@@ -8,11 +8,15 @@ import React from 'react';
         let camposProveedor = Object.keys(documentoProveedor[0]);
         let docFinal = [];
         if(this.validacionCampos(camposPrincipal, camposProveedor)){
-            let docPrincipal = this.busquedaCodigoDescripcion(documentoPrincipal, documentoPrincipal, 2);
-            let docProveedor = this.busquedaCodigoDescripcion(documentoProveedor, documentoProveedor, 2);
-            docFinal = this.busquedaCodigoDescripcion(docPrincipal, docProveedor, 1);
+            // let docPrincipal = this.busquedaCodigoDescripcion(documentoPrincipal, documentoPrincipal, 2);
+            // let docProveedor = this.busquedaCodigoDescripcion(documentoProveedor, documentoProveedor, 2);
+            docFinal = this.busquedaCodigoDescripcion(documentoPrincipal, documentoProveedor, 1);
         }
         return docFinal;
+    }
+
+    busquedaInterna(documento){
+        return this.busquedaCodigoDescripcion(documento, documento, 2);
     }
 
     busquedaCodigoDescripcion = (documentoPrincipal, documentoProveedor, tipo ) =>{

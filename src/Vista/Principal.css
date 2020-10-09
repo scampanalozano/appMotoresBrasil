@@ -13,9 +13,10 @@
 }
 
 .progress-bar {
-	width: 400px;
+	width: 200px;
 	margin: 0 auto;
 	margin-top: 20px;
+	/* background-color: transparent; */
 
 
 }
