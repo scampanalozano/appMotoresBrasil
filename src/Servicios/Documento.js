@@ -30,6 +30,7 @@ import React from 'react';
         documentoPrincipal.forEach(principal => {
             documentoProveedor.forEach(proveedor => {
                 if (principal[camposPrincipal[0]] === proveedor[camposProveedor[0]]){
+                    principal[camposPrincipal[1]] = proveedor[camposProveedor[1]];
                     if (proveedor[camposProveedor[3]] >= 5){// stock 
                         if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                             if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
@@ -41,13 +42,16 @@ import React from 'react';
                                 documentoModificadosProveedor.push(proveedor);
                             }
                         }else {
-                            proveedor['ESTADO'] = 'NUEVO';
-                            documentoNuevos.push(proveedor);
-                            documentoModificadosProveedor.push(proveedor);
+                            if(tipo == 1){
+                                proveedor['ESTADO'] = 'NUEVO';
+                                documentoNuevos.push(proveedor);
+                                documentoModificadosProveedor.push(proveedor);
+                            }
                         }
                     }
                 } else {
                     if(this.validacionDescripcion(principal[camposPrincipal[1]], proveedor[camposProveedor[1]])){
+                        principal[camposPrincipal[1]] = proveedor[camposProveedor[1]];
                         if (proveedor[camposProveedor[3]] >= 5){// stock 
                             if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
@@ -56,9 +60,11 @@ import React from 'react';
                                     documentoModificadosProveedor.push(proveedor);
                                 }
                             }else {
-                                proveedor['ESTADO'] = 'NUEVO';
-                                documentoNuevos.push(proveedor);
-                                documentoModificadosProveedor.push(proveedor);
+                                if(tipo == 1){
+                                    proveedor['ESTADO'] = 'NUEVO';
+                                    documentoNuevos.push(proveedor);
+                                    documentoModificadosProveedor.push(proveedor);
+                                }
                             }
                         }
                     }
@@ -68,7 +74,9 @@ import React from 'react';
         });
         let documentoFinal = documentoModificados.concat(documentoNuevos);
         if(tipo === 2){
-            documentoFinal = this.eliminarDuplicados(documentoFinal, camposPrincipal[0]);
+            console.log(documentoModificados, documentoNuevos);
+            documentoFinal = this.eliminarDuplicados(documentoFinal, camposPrincipal);
+            console.log(documentoFinal);
             return documentoFinal; 
         } 
         if(tipo == 1){
@@ -77,7 +85,9 @@ import React from 'react';
                 let index = documentoProveedor.indexOf(proveedor);
                 documentoProveedor.splice(index, 1);
             });
-            console.log(documentoProveedor);
+            documentoFinal = this.ordenarArray(documentoFinal, camposPrincipal[1]);
+            documentoProveedor = this.ordenarArray(documentoProveedor, camposProveedor[1]);
+
             return {docFinal: documentoFinal, docProveedor: documentoProveedor}; 
 
         }
@@ -117,15 +127,40 @@ import React from 'react';
     eliminarDuplicados(originalArray, prop) {
         var newArray = [];
         var lookupObject  = {};
-   
+
+        originalArray = this.ordenarArray(originalArray, prop[0]);
+        var elementoInit = originalArray[0];
+
         for(var i in originalArray) {
-           lookupObject[originalArray[i][prop]] = originalArray[i];
+            if(i > 0){
+                if(elementoInit[prop[0]] == originalArray[i][prop[0]] && elementoInit[prop[1]] == originalArray[i][prop[1]] && elementoInit[prop[2]] == originalArray[i][prop[2]]){
+                    elementoInit = originalArray[i];
+                }else{
+                    lookupObject[originalArray[i][prop[0]]] = originalArray[i];
+                }
+            }else{
+                lookupObject[originalArray[i][prop[0]]] = originalArray[i];
+            }
+
         }
    
         for(i in lookupObject) {
             newArray.push(lookupObject[i]);
         }
          return newArray;
+    }
+
+    ordenarArray(documento, campo){
+        return documento.sort(function (a, b) {
+            if (a[campo] > b[campo]) {
+              return 1;
+            }
+            if (a[campo] < b[campo]) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+        });
     }
     
     validacionCampos(camposPrincipal, camposProveedor){

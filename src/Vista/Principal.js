@@ -47,6 +47,7 @@ class Principal extends React.Component {
             var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
             setTimeout(()=>{
                 let archivo = this.Documento.busquedaInterna(XL_row_object);
+                console.log('mismo archivo',archivo);
                 if (name == 'file1') {
                     this.setState({
                         archivo1: archivo,
