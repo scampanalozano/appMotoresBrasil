@@ -29,8 +29,8 @@ import React from 'react';
         let documentoSobrantes = []
         documentoPrincipal.forEach(principal => {
             documentoProveedor.forEach(proveedor => {
-                if (principal[camposPrincipal[0]] === proveedor[camposProveedor[0]]){
-                    principal[camposPrincipal[1]] = proveedor[camposProveedor[1]];
+                if (principal[camposPrincipal[0]] === proveedor[camposProveedor[0]]){//valida codigo
+                    proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
                     if (proveedor[camposProveedor[3]] >= 5){// stock 
                         if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                             if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
@@ -50,8 +50,8 @@ import React from 'react';
                         }
                     }
                 } else {
-                    if(this.validacionDescripcion(principal[camposPrincipal[1]], proveedor[camposProveedor[1]])){
-                        principal[camposPrincipal[1]] = proveedor[camposProveedor[1]];
+                    if(this.validacionDescripcion(principal[camposPrincipal[1]], proveedor[camposProveedor[1]])){//valida descripcion
+                        proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
                         if (proveedor[camposProveedor[3]] >= 5){// stock 
                             if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
@@ -67,6 +67,9 @@ import React from 'react';
                                 }
                             }
                         }
+                    }else{
+                        documentoNuevos.push(proveedor);
+                        documentoModificadosProveedor.push(proveedor);
                     }
                 }
             });
@@ -115,7 +118,7 @@ import React from 'react';
     modificarItem(principal, proveedor, camposPrincipal){
         let item = {};
         camposPrincipal.forEach((campo, index) => {
-            if(index == 1 || index == 4 || index == 5){
+            if(index == 4 || index == 5){
                 item[campo] = proveedor[campo];
             }else{
                 item[campo] = principal[campo];
