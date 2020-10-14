@@ -68,8 +68,14 @@ import React from 'react';
                             }
                         }
                     }else{
-                        documentoNuevos.push(proveedor);
-                        documentoModificadosProveedor.push(proveedor);
+                        if(tipo == 1){
+                            if(!documentoNuevos.includes(proveedor)){
+                                documentoNuevos.push(proveedor);
+                            }
+                            if(!documentoModificadosProveedor.includes(proveedor)){
+                                documentoModificadosProveedor.push(proveedor);
+                            }
+                        }
                     }
                 }
             });
@@ -77,9 +83,7 @@ import React from 'react';
         });
         let documentoFinal = documentoModificados.concat(documentoNuevos);
         if(tipo === 2){
-            console.log(documentoModificados, documentoNuevos);
             documentoFinal = this.eliminarDuplicados(documentoFinal, camposPrincipal);
-            console.log(documentoFinal);
             return documentoFinal; 
         } 
         if(tipo == 1){
@@ -88,6 +92,7 @@ import React from 'react';
                 let index = documentoProveedor.indexOf(proveedor);
                 documentoProveedor.splice(index, 1);
             });
+            documentoFinal = this.eliminarDuplicados(documentoFinal, camposPrincipal);
             documentoFinal = this.ordenarArray(documentoFinal, camposPrincipal[1]);
             documentoProveedor = this.ordenarArray(documentoProveedor, camposProveedor[1]);
 
@@ -182,7 +187,6 @@ import React from 'react';
             })
         }
         validacion = false;
-        //console.log(contador, camposPrincipal.length);
         if(contador == camposPrincipal.length){
             validacion = true;
         }

@@ -43,11 +43,9 @@ class Principal extends React.Component {
         var workbook = XLSX.read(data, { type: 'array' });
         workbook.SheetNames.forEach((sheetName) => {
             this.setState({cargaArchivo: true});
-            console.log(this.state.cargaArchivo);
             var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
             setTimeout(()=>{
                 let archivo = this.Documento.busquedaInterna(XL_row_object);
-                console.log('mismo archivo',archivo);
                 if (name == 'file1') {
                     this.setState({
                         archivo1: archivo,
@@ -64,10 +62,8 @@ class Principal extends React.Component {
     }
 
     procesarPorCodigo = () => {
-        console.log(this.state);
         if(this.state.archivo1 != null && this.state.archivo2 != null){
             this.setState({inicioProceso: true});
-            console.log(this.state.inicioProceso);
             setTimeout(()=>{
                 let archivoFinal = this.Documento.busqueda(this.state.archivo1, this.state.archivo2);
                 if (archivoFinal.docFinal.length > 0) {
@@ -90,9 +86,6 @@ class Principal extends React.Component {
     }
 
     descargar = () => {
-        console.log('descargar');
-        console.log(this.state.archivoFinal);
-        console.log(this.state.archivoSobrantesProveedor);
         this.procesoDescarga(this.state.archivoFinal, this.state.camposArchivo, 'principal');
         this.procesoDescarga(this.state.archivoSobrantesProveedor, this.state.camposArchivo, 'sobrantes');
     }
