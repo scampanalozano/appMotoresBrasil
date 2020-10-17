@@ -63,16 +63,17 @@ class Principal extends React.Component {
 
     procesarPorCodigo = () => {
         if(this.state.archivo1 != null && this.state.archivo2 != null){
+            console.log(this.state);
             this.setState({inicioProceso: true});
             setTimeout(()=>{
                 let archivoFinal = this.Documento.busqueda(this.state.archivo1, this.state.archivo2);
-                if (archivoFinal.docFinal.length > 0) {
-                    let camposArchivo = Object.keys(archivoFinal.docFinal[0]);
+                console.log(archivoFinal);
+                if (archivoFinal.length > 0) {
+                    let camposArchivo = Object.keys(archivoFinal[0]);
                     console.log(camposArchivo);
                     console.log(archivoFinal);
                     this.setState({
-                        archivoFinal: archivoFinal.docFinal,
-                        archivoSobrantesProveedor: archivoFinal.docProveedor,
+                        archivoFinal: archivoFinal,
                         camposArchivo: camposArchivo,
                         inicioProceso: false
                     })
@@ -87,8 +88,29 @@ class Principal extends React.Component {
 
     descargar = () => {
         this.procesoDescarga(this.state.archivoFinal, this.state.camposArchivo, 'principal');
-        this.procesoDescarga(this.state.archivoSobrantesProveedor, this.state.camposArchivo, 'sobrantes');
+        
     }
+
+    sobrantes = () => {
+        console.log('ingresa');
+        if(this.state.archivo2 && this.state.archivoFinal){
+            this.setState({inicioProceso: true});
+            setTimeout(()=>{
+                let archivoSobrantesProveedor = this.Documento.busquedaSobrantes(this.state.archivo2, this.state.archivoFinal);
+                if (archivoSobrantesProveedor.length > 0) {
+                    this.procesoDescarga(archivoSobrantesProveedor, this.state.camposArchivo, 'sobrantes');
+                    this.setState({inicioProceso: false});
+                }else{
+                    this.setState({inicioProceso: false});
+                    alert('El archivo no tiene sobrantes');
+                }
+            },200)
+        }else{
+            alert('No se ha procesado los archivos');
+        }
+    }
+
+
 
     procesoDescarga(archivo, campos, nombre){
         let ws = XLSX.utils.json_to_sheet(archivo, { header: campos });
@@ -101,6 +123,11 @@ class Principal extends React.Component {
     }
 
     render() {
+        let disabled = '';
+        if(this.state.inicioProceso){
+            disabled  = 'disabled';
+        }
+
         return (
             <Container className='contenedor'>
 
@@ -148,13 +175,10 @@ class Principal extends React.Component {
 
                 </Row>
                 <Row>
-
                     <div className='botones'>
-                        {this.state.inicioProceso?
-                        (<Button type="button" onClick={this.procesarPorCodigo} className='separador' disabled>Procesar</Button>):
-                        (<Button type="button" onClick={this.procesarPorCodigo} className='separador'>Procesar</Button>)
-                        }
-                        <Button type="button" onClick={this.descargar}>Descargar</Button>
+                        <Button type="button" onClick={this.procesarPorCodigo} className='separador' disabled={disabled}>Procesar</Button>
+                        <Button type="button" onClick={this.sobrantes} className='separador' disabled={disabled}>Sobrantes</Button>
+                        <Button type="button" onClick={this.descargar} disabled={disabled}>Descargar</Button>
                     </div>
                 </Row>
                 <Row>
