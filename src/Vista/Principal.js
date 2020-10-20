@@ -63,17 +63,14 @@ class Principal extends React.Component {
 
     procesarPorCodigo = () => {
         if(this.state.archivo1 != null && this.state.archivo2 != null){
-            console.log(this.state);
             this.setState({inicioProceso: true});
             setTimeout(()=>{
                 let archivoFinal = this.Documento.busqueda(this.state.archivo1, this.state.archivo2);
-                console.log(archivoFinal);
-                if (archivoFinal.length > 0) {
-                    let camposArchivo = Object.keys(archivoFinal[0]);
-                    console.log(camposArchivo);
-                    console.log(archivoFinal);
+                if (archivoFinal.docFinal.length > 0) {
+                    let camposArchivo = Object.keys(archivoFinal.docFinal[0]);
                     this.setState({
-                        archivoFinal: archivoFinal,
+                        archivoFinal: archivoFinal.docFinal,
+                        archivoSobrantesProveedor: archivoFinal.docSobrantes,
                         camposArchivo: camposArchivo,
                         inicioProceso: false
                     })
@@ -88,27 +85,11 @@ class Principal extends React.Component {
 
     descargar = () => {
         this.procesoDescarga(this.state.archivoFinal, this.state.camposArchivo, 'principal');
+        this.procesoDescarga(this.state.archivoSobrantesProveedor, this.state.camposArchivo, 'sobrantes');
         
     }
 
-    sobrantes = () => {
-        console.log('ingresa');
-        if(this.state.archivo2 && this.state.archivoFinal){
-            this.setState({inicioProceso: true});
-            setTimeout(()=>{
-                let archivoSobrantesProveedor = this.Documento.busquedaSobrantes(this.state.archivo2, this.state.archivoFinal);
-                if (archivoSobrantesProveedor.length > 0) {
-                    this.procesoDescarga(archivoSobrantesProveedor, this.state.camposArchivo, 'sobrantes');
-                    this.setState({inicioProceso: false});
-                }else{
-                    this.setState({inicioProceso: false});
-                    alert('El archivo no tiene sobrantes');
-                }
-            },200)
-        }else{
-            alert('No se ha procesado los archivos');
-        }
-    }
+
 
 
 
@@ -127,6 +108,21 @@ class Principal extends React.Component {
         if(this.state.inicioProceso){
             disabled  = 'disabled';
         }
+
+        let datosVisualizar = [];
+        this.state.archivoFinal.forEach((item) => {
+            item['css'] = '';
+            if(item['ESTADO'] == 'MODIFICADO'){
+                item['css'] = 'modificados';
+            }
+            if(item['ESTADO'] == 'NUEVA MARCA'){
+                item['css'] = 'nuevos-marca';
+            }
+            if(item['ESTADO'] == 'NUEVO'){
+                item['css'] = 'nuevos';
+            }
+            datosVisualizar.push(item);
+        });
 
         return (
             <Container className='contenedor'>
@@ -177,7 +173,7 @@ class Principal extends React.Component {
                 <Row>
                     <div className='botones'>
                         <Button type="button" onClick={this.procesarPorCodigo} className='separador' disabled={disabled}>Procesar</Button>
-                        <Button type="button" onClick={this.sobrantes} className='separador' disabled={disabled}>Sobrantes</Button>
+                        {/* <Button type="button" onClick={this.sobrantes} className='separador' disabled={disabled}>Sobrantes</Button> */}
                         <Button type="button" onClick={this.descargar} disabled={disabled}>Descargar</Button>
                     </div>
                 </Row>
@@ -191,6 +187,24 @@ class Principal extends React.Component {
                     )}
                 </Row>
                 <Row>
+                    <Table>
+                        <tr>
+                            <td align="center">
+                                <span>Modificado</span> 
+                                <div className="div-senal modificados"></div>
+                            </td>
+                            <td align="center">
+                                <span>Nueva Marca</span> 
+                                <div className="div-senal nuevos-marca"></div>
+                            </td>
+                            <td align="center">
+                                <span>Nuevo</span> 
+                                <div className="div-senal nuevos"></div>
+                            </td>
+                        </tr>
+                    </Table>
+                </Row>
+                <Row>
                     <Table striped bordered className='tabla'>
                         <thead>
                             <tr>
@@ -202,8 +216,8 @@ class Principal extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.archivoFinal.map((item, index) =>
-                                (<tr key={index}>
+                            {datosVisualizar.map((item, index) =>
+                                (<tr key={index} className={item['css']}>
                                     {this.state.camposArchivo.map((campo, indexC) => (
                                         <td key={indexC}>
                                             {item[campo]}

@@ -10,3 +10,5 @@
 [1016/201742.879:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\Dell\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\1d43d497-ff86-4b49-8996-74025eca0c3b: El sistema no puede encontrar la ruta especificada. (0x3)
 [1016/202445.538:ERROR:directory_reader_win.cc(43)] FindFirstFile: El sistema no puede encontrar la ruta especificada. (0x3)
 [1016/213552.897:ERROR:directory_reader_win.cc(43)] FindFirstFile: El sistema no puede encontrar la ruta especificada. (0x3)
+[1019/154925.775:ERROR:directory_reader_win.cc(43)] FindFirstFile: El sistema no puede encontrar la ruta especificada. (0x3)
+[1019/170531.092:ERROR:directory_reader_win.cc(43)] FindFirstFile: El sistema no puede encontrar la ruta especificada. (0x3)

@@ -23,13 +23,25 @@
 
 .separador {
 	margin-right: 20px;
-
-
-
 }
 
 .tabla{
 	margin-top: 20px;
+}
 
+.modificados{
+	background-color: #D7DF01 !important;
+}
 
+.nuevos-marca{
+	background-color: #00FFFF !important;
+}
+
+.nuevos{
+	background-color: #F7819F !important;
+}
+
+.div-senal{
+	width: 20px;
+	height: 20px;
 }
