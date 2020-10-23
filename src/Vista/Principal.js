@@ -66,15 +66,21 @@ class Principal extends React.Component {
             this.setState({inicioProceso: true});
             setTimeout(()=>{
                 let archivoFinal = this.Documento.busqueda(this.state.archivo1, this.state.archivo2);
-                if (archivoFinal.docFinal.length > 0) {
-                    let camposArchivo = Object.keys(archivoFinal.docFinal[0]);
-                    this.setState({
-                        archivoFinal: archivoFinal.docFinal,
-                        archivoSobrantesProveedor: archivoFinal.docSobrantes,
-                        camposArchivo: camposArchivo,
-                        inicioProceso: false
-                    })
+                if (!Array.isArray(archivoFinal)) {
+                    if (archivoFinal.docFinal.length > 0) {
+                        let camposArchivo = Object.keys(archivoFinal.docFinal[0]);
+                        this.setState({
+                            archivoFinal: archivoFinal.docFinal,
+                            archivoSobrantesProveedor: archivoFinal.docSobrantes,
+                            camposArchivo: camposArchivo,
+                            inicioProceso: false
+                        })
+                    } else {
+                        this.setState({inicioProceso: false});
+                        alert('Los archivos no tienen campos iguales');
+                    }
                 } else {
+                    this.setState({inicioProceso: false});
                     alert('Los archivos no tienen campos iguales');
                 }
             }, 200);

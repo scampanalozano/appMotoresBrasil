@@ -121,6 +121,15 @@ import React from 'react';
             documentoUsados.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
                 documentoProveedoresModificado.splice(index, 1);
+                if(proveedor['ESTADO'] == 'NUEVA MARCA'){
+                    documentoFinal.forEach((principal, indexF) => {
+                        if(proveedor[camposPrincipal[1]] == principal[camposPrincipal[1]] &&
+                            proveedor[camposPrincipal[2]] == principal[camposPrincipal[2]] &&
+                            proveedor['ESTADO'] == principal['ESTADO']){
+                            documentoFinal.splice(indexF, 1);
+                        }
+                    })
+                }
             });
             documentoSobrantes.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
