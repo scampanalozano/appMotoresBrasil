@@ -24,6 +24,7 @@ class Principal extends React.Component {
             procesando: 0,
             inicioProceso: false,
             cargaArchivo: false,
+            datosVisualizar: [],
         }
         this.Documento = new Documento();
     }
@@ -69,10 +70,12 @@ class Principal extends React.Component {
                 if (!Array.isArray(archivoFinal)) {
                     if (archivoFinal.docFinal.length > 0) {
                         let camposArchivo = Object.keys(archivoFinal.docFinal[0]);
+                        let datosVisualizar = this.agregarCssArray(archivoFinal.docFinal);
                         this.setState({
                             archivoFinal: archivoFinal.docFinal,
                             archivoSobrantesProveedor: archivoFinal.docSobrantes,
                             camposArchivo: camposArchivo,
+                            datosVisualizar: datosVisualizar,
                             inicioProceso: false
                         })
                     } else {
@@ -96,7 +99,24 @@ class Principal extends React.Component {
     }
 
 
-
+    agregarCssArray(array){
+        let datosVisualizar = [];
+        array.map((itemArray) => {
+            let item = Object.assign({}, itemArray);
+            item['css'] = '';
+            if(itemArray['ESTADO'] == 'MODIFICADO'){
+                item['css'] = 'modificados';
+            }
+            if(itemArray['ESTADO'] == 'NUEVA MARCA'){
+                item['css'] = 'nuevos-marca';
+            }
+            if(itemArray['ESTADO'] == 'NUEVO'){
+                item['css'] = 'nuevos';
+            }
+            datosVisualizar.push(item);
+        });;
+        return datosVisualizar;
+    }
 
 
     procesoDescarga(archivo, campos, nombre){
@@ -104,7 +124,8 @@ class Principal extends React.Component {
         let wb = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(wb, ws, "SheetJS");
         let fecha = new Date();
-        let fechaString = fecha.getFullYear()+'-'+fecha.getMonth()+'-'+fecha.getDate();
+        let mes = fecha.getMonth() + 1;
+        let fechaString = fecha.getFullYear()+'-'+mes+'-'+fecha.getDate();
         let exportFileName = `${nombre}-${fechaString}.xls`;
         XLSX.writeFile(wb, exportFileName)
     }
@@ -115,27 +136,9 @@ class Principal extends React.Component {
             disabled  = 'disabled';
         }
 
-        let datosVisualizar = [];
-        this.state.archivoFinal.forEach((item) => {
-            item['css'] = '';
-            if(item['ESTADO'] == 'MODIFICADO'){
-                item['css'] = 'modificados';
-            }
-            if(item['ESTADO'] == 'NUEVA MARCA'){
-                item['css'] = 'nuevos-marca';
-            }
-            if(item['ESTADO'] == 'NUEVO'){
-                item['css'] = 'nuevos';
-            }
-            datosVisualizar.push(item);
-        });
-
         return (
             <Container className='contenedor'>
-
-
                 <Row>
-
                     <Col>
                         <div>
                             <label>
@@ -222,7 +225,7 @@ class Principal extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {datosVisualizar.map((item, index) =>
+                            {this.state.datosVisualizar.map((item, index) =>
                                 (<tr key={index} className={item['css']}>
                                     {this.state.camposArchivo.map((campo, indexC) => (
                                         <td key={indexC}>
