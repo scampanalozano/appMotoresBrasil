@@ -16,7 +16,8 @@ import React from 'react';
     }
 
     busquedaInterna(documento){
-        return this.busquedaCodigoDescripcion(documento, documento, 2);
+       return this.busquedaCodigoDescripcion(documento, documento, 2);
+       
     }
 
     busquedaCodigoDescripcion = (documentoPrincipal, documentoProveedor, tipo ) =>{
@@ -52,7 +53,9 @@ import React from 'react';
                     }
                 } else {
                     if(this.validacionDescripcion(principal[camposPrincipal[1]], proveedor[camposProveedor[1]])){//valida descripcion
-                        proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
+                        if(tipo == 1){
+                            proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
+                        }
                         if (proveedor[camposProveedor[3]] >= 5){// stock 
                             if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
