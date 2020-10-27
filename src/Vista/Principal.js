@@ -104,10 +104,10 @@ class Principal extends React.Component {
         array.map((itemArray) => {
             let item = Object.assign({}, itemArray);
             item['css'] = '';
-            if(itemArray['ESTADO'] == 'MODIFICADO'){
+            if(itemArray['ESTADO'] == 'MODIFICADO Y NORMALIZADO'){
                 item['css'] = 'modificados';
             }
-            if(itemArray['ESTADO'] == 'NUEVA MARCA'){
+            if(itemArray['ESTADO'] == 'NUEVA MARCA Y NORMALIZADO'){
                 item['css'] = 'nuevos-marca';
             }
             if(itemArray['ESTADO'] == 'NUEVO'){

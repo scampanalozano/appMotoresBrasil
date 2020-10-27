@@ -26,26 +26,22 @@ import React from 'react';
         
         let documentoFinal = [];
         let documentoProveedoresModificado = [];
-        let itemsModificados = {};
         documentoPrincipal.forEach(principal => {
+            let itemModifocado = false;
             documentoProveedor.forEach(proveedor => {
-                if (principal[camposPrincipal[0]] === proveedor[camposProveedor[0]]){//valida codigo
+                if (principal[camposPrincipal[0]].toString() === proveedor[camposProveedor[0]].toString()){//valida codigo
+                    console.log('cod:',principal[camposPrincipal[0]], proveedor[camposProveedor[0]]);
                     proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
                     if (proveedor[camposProveedor[3]] >= 5){// stock 
                         if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                             if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
                                 principal = proveedor;
-                                if(tipo === 1){
-                                    // principal = this.modificarItem(principal, proveedor, camposPrincipal);
-                                    itemsModificados[principal[camposPrincipal[0]]+''+principal[camposPrincipal[1]]+'-'+principal[camposPrincipal[2]]] = 'MODIFICADO';
-                                    principal['ESTADO'] = 'MODIFICADO';
-                                }
+                                itemModifocado = true;
                             }
                         }else {
                             if(tipo == 1){
-                                proveedor['ESTADO'] = 'NUEVA MARCA';
-                                itemsModificados[proveedor[camposProveedor[0]]+''+proveedor[camposProveedor[1]]+'-'+proveedor[camposProveedor[2]]] = 'NUEVO E';
                                 if(this.validarDuplicado(documentoFinal, proveedor, camposProveedor)){
+                                    proveedor['ESTADO'] = 'NUEVA MARCA Y NORMALIZADO';
                                     documentoFinal.push(proveedor);
                                 }
                             }
@@ -56,21 +52,19 @@ import React from 'react';
                         if(tipo == 1){
                             proveedor[camposPrincipal[1]] = principal[camposProveedor[1]];
                         }
+                        console.log('desc:',principal[camposPrincipal[0]], proveedor[camposProveedor[0]]);
                         if (proveedor[camposProveedor[3]] >= 5){// stock 
                             if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
                                     principal = proveedor;
-                                    if(tipo == 1){
-                                        principal['ESTADO'] = 'MODIFICADO';
-                                        itemsModificados[principal[camposPrincipal[0]]+''+principal[camposPrincipal[1]]+'-'+principal[camposPrincipal[2]]] = 'MODIFICADO';
-                                    }
+                                    itemModifocado = true;
                                 }
                             }else {
                                 if(tipo == 1){
-                                    proveedor['ESTADO'] = 'NUEVA MARCA';
-                                    itemsModificados[proveedor[camposProveedor[0]]+''+proveedor[camposProveedor[1]]+'-'+proveedor[camposProveedor[2]]] = 'NUEVO E';
                                     if(this.validarDuplicado(documentoFinal, proveedor, camposProveedor)){
+                                        proveedor['ESTADO'] = 'NUEVA MARCA Y';
                                         documentoFinal.push(proveedor);
+                                        console.log('agrega NuevoDes', proveedor[camposProveedor[0]], proveedor);
                                     }
                                 }
                             }
@@ -85,6 +79,12 @@ import React from 'react';
             });
             
             if(this.validarDuplicado(documentoFinal, principal, camposPrincipal)){
+                if(principal[camposPrincipal[0]] == '96143112'){
+                    console.log('agrega Mod', principal[camposPrincipal[0]], principal);
+                }
+                if(tipo === 1 && itemModifocado){
+                    principal['ESTADO'] = 'MODIFICADO Y NORMALIZADO';
+                }
                 documentoFinal.push(principal);
             }
         });
@@ -124,15 +124,16 @@ import React from 'react';
             documentoUsados.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
                 documentoProveedoresModificado.splice(index, 1);
-                if(proveedor['ESTADO'] == 'NUEVA MARCA'){
-                    documentoFinal.forEach((principal, indexF) => {
-                        if(proveedor[camposPrincipal[1]] == principal[camposPrincipal[1]] &&
-                            proveedor[camposPrincipal[2]] == principal[camposPrincipal[2]] &&
-                            proveedor['ESTADO'] == principal['ESTADO']){
-                            documentoFinal.splice(indexF, 1);
-                        }
-                    })
-                }
+                // if(proveedor['ESTADO'] == 'NUEVA MARCA'){
+                //     documentoFinal.forEach((principal, indexF) => {
+                //         if(proveedor[camposPrincipal[1]] == principal[camposPrincipal[1]] &&
+                //             proveedor[camposPrincipal[2]] == principal[camposPrincipal[2]] &&
+                //             proveedor['ESTADO'] == principal['ESTADO']){
+                //             console.log(principal);
+                //             documentoFinal.splice(indexF, 1);
+                //         }
+                //     })
+                // }
             });
             documentoSobrantes.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
@@ -164,7 +165,7 @@ import React from 'react';
                 });
             });
             let porcentaje = (contadorPalabras * 100)/arrayDescripcionPrincipal.length;
-            if(porcentaje >= 90){
+            if(porcentaje >= 98){
                 return true;
             }
             return false;
