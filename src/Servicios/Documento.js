@@ -177,7 +177,6 @@ import React from 'react';
         let item = {};
         camposPrincipal.forEach((campo, index) => {
             if(index == 4 || index == 5){
-                item[campo] = proveedor[campo];
             }else{
                 item[campo] = principal[campo];
             }
