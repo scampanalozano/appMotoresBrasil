@@ -54,7 +54,7 @@ import React from 'react';
                         }
                         console.log('desc:',principal[camposPrincipal[0]], proveedor[camposProveedor[0]]);
                         if (proveedor[camposProveedor[3]] >= 5){// stock 
-                            if(principal[camposPrincipal[2]] === proveedor[camposProveedor[2]]){// compracion de marca
+                            if(principal[camposPrincipal[2]].trim() === proveedor[camposProveedor[2]].trim()){// compracion de marca
                                 if(proveedor[camposProveedor[4]] < principal[camposPrincipal[4]]){// comparacion del precio
                                     principal = proveedor;
                                     itemModifocado = true;
@@ -62,7 +62,7 @@ import React from 'react';
                             }else {
                                 if(tipo == 1){
                                     if(this.validarDuplicado(documentoFinal, proveedor, camposProveedor)){
-                                        proveedor['ESTADO'] = 'NUEVA MARCA Y';
+                                        proveedor['ESTADO'] = 'NUEVA MARCA Y NORMALIZADO';
                                         documentoFinal.push(proveedor);
                                         console.log('agrega NuevoDes', proveedor[camposProveedor[0]], proveedor);
                                     }
@@ -97,6 +97,7 @@ import React from 'react';
             let documentoUsados = [];
             let documentoSobrantes = [];
             let documentoNuevos = [];
+            let itemsRepetidos={};
             documentoFinal.forEach(principal => {
                 documentoProveedoresModificado.forEach(proveedor => {
                     if(proveedor[camposProveedor[0]] == principal[camposPrincipal[0]] &&
@@ -109,6 +110,7 @@ import React from 'react';
                             }else{
                                 if(this.validarDuplicado(documentoUsados, proveedor, camposProveedor)){
                                     documentoUsados.push(proveedor);
+                                    itemsRepetidos[proveedor[camposProveedor[0]]+"-"+proveedor[camposProveedor[2]]]=0;
                                 }
                             }
                     }else{
@@ -121,20 +123,26 @@ import React from 'react';
                 })
 
             })
+      
             documentoUsados.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
                 documentoProveedoresModificado.splice(index, 1);
-                // if(proveedor['ESTADO'] == 'NUEVA MARCA'){
-                //     documentoFinal.forEach((principal, indexF) => {
-                //         if(proveedor[camposPrincipal[1]] == principal[camposPrincipal[1]] &&
-                //             proveedor[camposPrincipal[2]] == principal[camposPrincipal[2]] &&
-                //             proveedor['ESTADO'] == principal['ESTADO']){
-                //             console.log(principal);
-                //             documentoFinal.splice(indexF, 1);
-                //         }
-                //     })
-                // }
+                 if(proveedor['ESTADO'] == 'NUEVA MARCA Y NORMALIZADO'){
+                     documentoFinal.forEach((principal, indexF) => {
+                         if(proveedor[camposPrincipal[0]] == principal[camposPrincipal[0]] &&
+                             proveedor[camposPrincipal[1]] == principal[camposPrincipal[1]] &&
+                             proveedor[camposPrincipal[2]] == principal[camposPrincipal[2]]){
+                            itemsRepetidos[principal[camposPrincipal[0]]+"-"+principal[camposPrincipal[2]]]++;
+                            if(itemsRepetidos[principal[camposPrincipal[0]]+"-"+principal[camposPrincipal[2]]]>1){
+                                let indexP = documentoFinal.indexOf(proveedor);
+                                documentoFinal.splice(indexP, 1);
+                            }
+                        
+                         }
+                     })
+                }
             });
+            console.log(itemsRepetidos);
             documentoSobrantes.forEach(proveedor => {
                 let index = documentoProveedoresModificado.indexOf(proveedor);
                 documentoProveedoresModificado.splice(index, 1);
